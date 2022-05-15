@@ -7,3 +7,4 @@ If successful and efficient, this project may be ported into other personal web-
 https://www.npmjs.com/package/node-aes-gcm
 https://www.npmjs.com/package/chacha
 https://www.npmjs.com/package/eccrypto
+https://nodejs.org/docs/latest/api/crypto.html
