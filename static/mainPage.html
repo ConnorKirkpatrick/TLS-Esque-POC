@@ -4,9 +4,10 @@
 <script>
     let socket = io();
 </script>
-<script src="static/functions/crypto.js"></script>
-<script src="static/functions/ECDHE.js"></script>
-<script src="static/functions/SecGen.js"></script>
+<script src="static/functions/Crypto/crypto.js"></script>
+<script src="static/functions/ECDH/ECDHE.js"></script>
+<script src="static/functions/ECDH/SecGen.js"></script>
+<script src="static/functions/ECDH/masterKey.js"></script>
 <head>
     <meta charset="UTF-8">
     <title>Welcome to my Testing page</title>
@@ -26,6 +27,10 @@ socket.on("ServKey", (SKey) => {
     window.ServKey = SKey
     let secret = SecGen();
     console.log(secret)
+    let mkey = masterKey(secret,"")
+    //TODO add some method for identical derivation of a nonce, possibly server/client picks with AEAD channel
+    console.log(mkey.length)
+    console.log(mkey.toString('hex'))
 })
 </script>
 </html>

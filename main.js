@@ -6,9 +6,10 @@ const express = require("express")
 app.use("/static", express.static(path.join(__dirname, "./static/")));
 
 const ECDHE = require("./functions/ECDH/ECDHE")
+const masterKey = require("./functions/ECDH/masterKey")
 const encrypt = require("./functions/chacha/encrypt")
 const decrypt = require("./functions/chacha/decrypt")
-const masterKey = require("./functions/chacha/masterKey")
+
 
 let PORT = Number(process.env.PORT || 80);
 http.listen(PORT, () => {
@@ -18,28 +19,39 @@ http.listen(PORT, () => {
 app.get("/", (req, res) => {
     res.sendFile(__dirname + "/static/mainPage.html");
 });
-let Keys = ECDHE()
-console.log(Keys.getPublicKey())
+
 io.on("connection",(socket) => {
     console.log("Client connected")
+    //upon connection, derive and send client the server public key
+    let Keys = ECDHE()
     socket.emit("ServKey", (Keys.getPublicKey()))
 
     socket.on("Test", () => {
         console.log("Button clicked")
     })
-
+    //receive the clients public key
     socket.on("PubKey", (CKey) =>{
         console.log("Client key: ");
         console.log(CKey)
+        //generate shared secret from client and server keys
         let sharedSecret = Keys.computeSecret(CKey)
+        console.log("Shared secret: ")
         console.log(sharedSecret)
-        let data = "somedata"
-        let eData = encrypt(sharedSecret, data, data)
+        //generate a master password from the shared secret
+        let mKey = masterKey(sharedSecret, "")
+        console.log("Master Key: ")
+        console.log(mKey)
+        console.log(mKey.length)
+
+
+        let data = "conn-Test"
+        let eData = encrypt(mKey, data)
         let encrypted = eData[0]
         let nonce = eData[1]
         let tag = eData[2]
         console.log(encrypted)
-        console.log(decrypt(sharedSecret, encrypted, nonce, tag).toString())
-        //masterKey(sharedSecret, "")
+        console.log(decrypt(mKey, encrypted, nonce, tag).toString())
+
     })
+    //TODO Store ephemural key object, client cookie and master secret for connection once cipher is created
 })
