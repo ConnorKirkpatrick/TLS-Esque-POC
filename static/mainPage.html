@@ -8,6 +8,13 @@
 <script src="static/functions/ECDH/ECDHE.js"></script>
 <script src="static/functions/ECDH/SecGen.js"></script>
 <script src="static/functions/ECDH/masterKey.js"></script>
+
+<script src="https://bundle.run/buffer@6.0.3"></script>
+
+<script src="static/functions/Crypto/chacha.js"></script>
+<script src="static/functions/chacha/encrypt.js"></script>
+<script src="static/functions/chacha/decrypt.js"></script>
+
 <head>
     <meta charset="UTF-8">
     <title>Welcome to my Testing page</title>
@@ -26,11 +33,19 @@ socket.on("ServKey", (SKey) => {
     console.log(SKey)
     window.ServKey = SKey
     let secret = SecGen();
+    console.log("Secret:")
     console.log(secret)
-    let mkey = masterKey(secret,"")
+    window.mKey = masterKey(secret,"")
     //TODO add some method for identical derivation of a nonce, possibly server/client picks with AEAD channel
-    console.log(mkey.length)
-    console.log(mkey.toString('hex'))
+})
+socket.on("newData", (eData) => {
+    if(decrypt(window.mKey, eData[0], eData[1], eData[2]).toString() === "conn-Test"){
+        console.log("MATCH")
+        socket.emit("newData", (encrypt(window.mKey,"good-Conn")))
+    }
+    else{
+        socket.emit("Bad-Conn")
+    }
 })
 </script>
 </html>
