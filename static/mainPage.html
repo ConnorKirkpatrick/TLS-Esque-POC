@@ -1,10 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    let socket = io();
+</script>
+<script src="static/functions/crypto.js"></script>
+<script src="static/functions/ECDHE.js"></script>
+<script src="static/functions/SecGen.js"></script>
 <head>
     <meta charset="UTF-8">
     <title>Welcome to my Testing page</title>
 </head>
 <body>
 Hello!
+<div>
+    <button class="button1" id="negotiate" type="button" onclick=socket.emit("Test")>Negotiate Cipher</button><br><br>
+</div>
 </body>
+
+<script>
+socket.emit("PubKey", (ECDHE()));
+console.log(window.keys)
+socket.on("ServKey", (SKey) => {
+    console.log(SKey)
+    window.ServKey = SKey
+    let secret = SecGen();
+    console.log(secret)
+})
+</script>
 </html>
+
