@@ -15,6 +15,8 @@
 <script src="static/functions/chacha/encrypt.js"></script>
 <script src="static/functions/chacha/decrypt.js"></script>
 
+<script src="static/functions/newDataHandler.js"></script>
+
 <head>
     <meta charset="UTF-8">
     <title>Welcome to my Testing page</title>
@@ -27,23 +29,24 @@ Hello!
 </body>
 
 <script>
-socket.emit("PubKey", (ECDHE()));
-console.log(window.keys)
+
 socket.on("ServKey", (SKey) => {
-    console.log(SKey)
+    socket.emit("PubKey", (ECDHE()));
     window.ServKey = SKey
     let secret = SecGen();
-    console.log("Secret:")
-    console.log(secret)
     window.mKey = masterKey(secret,"")
-    //TODO add some method for identical derivation of a nonce, possibly server/client picks with AEAD channel
+    //TODO add some method for identical derivation of a nonce for the MKEY, possibly server/client picks with AEAD channel
 })
+//handshake; check we can decrypt data, return "good-Conn" if true
 socket.on("newData", (eData) => {
-    if(decrypt(window.mKey, eData[0], eData[1], eData[2]).toString() === "conn-Test"){
-        console.log("MATCH")
-        socket.emit("newData", (encrypt(window.mKey,"good-Conn")))
+    console.log("got data")
+    try{
+        let message = decrypt(window.mKey, eData[0], eData[1], eData[2])
+        message = message.toString().split("<SEPERATOR>")
+        newDataHandler(message)
     }
-    else{
+    catch{
+        console.log("bad data")
         socket.emit("Bad-Conn")
     }
 })
