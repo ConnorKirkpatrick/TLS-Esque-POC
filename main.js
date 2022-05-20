@@ -76,15 +76,6 @@ app.get("/", (req, res) => {
 
 });
 
-    /*
-    //upon connection, derive and send client the server public key
-
-
-    //receive the clients public key
-     */
-    //TODO Store master secret and client cookie for connection once cipher is created
-
-
 function randomString(size = 21) {
     return Crypto
         .randomBytes(size)
