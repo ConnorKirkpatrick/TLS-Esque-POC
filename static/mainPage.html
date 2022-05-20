@@ -29,7 +29,6 @@ Hello!
 </body>
 
 <script>
-
 socket.on("ServKey", (SKey) => {
     socket.emit("PubKey", (ECDHE()));
     window.ServKey = SKey
@@ -42,6 +41,7 @@ socket.on("newData", (eData) => {
     console.log("got data")
     try{
         let message = decrypt(window.mKey, eData[0], eData[1], eData[2])
+        console.log("test")
         message = message.toString().split("<SEPERATOR>")
         newDataHandler(message)
     }
