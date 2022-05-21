@@ -35,6 +35,7 @@ app.get("/", (req, res) => {
     res.sendFile(__dirname + "/static/mainPage.html");
     io.on("connection", (socket) => {
         console.log("CLIENT CONNECTED")
+        socket.emit("SERVER-HELLO")
         if(mKey === undefined){
             console.log("NO COOKIE, HANDSHAKE")
             let Keys = ECDHE()
@@ -48,12 +49,12 @@ app.get("/", (req, res) => {
                 //encrypt and send handshake message
                 let data = "conn-Test<SEPERATOR>"
                 let eData = encrypt(mKey, data)
-                socket.emit("newData", (eData))
+                socket.emit("serverMessage", (eData))
                 //Once encryption is created, attempt to communicate using the "new data" socket tag
                 //a second tag can be included inside the encrypted message to trigger actions in the future
             })
             //receive the second part of the handshake confirming the establishment of the secure channel
-            socket.on("newData", (eData) => {
+            socket.on("clientMessage", (eData) => {
                 if(decrypt(mKey, eData[0], eData[1], eData[2]).toString() === "good-Conn"){
                     console.log("Secure channel constructed")
                     //generate cookie, send new cookie
