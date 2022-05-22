@@ -30,6 +30,7 @@ Hello!
 
 <script>
 socket.on("ServKey", (SKey) => {
+    console.log("keyExchange")
     socket.emit("PubKey", (ECDHE()));
     window.ServKey = SKey
     let secret = SecGen();
@@ -38,7 +39,6 @@ socket.on("ServKey", (SKey) => {
 })
 //handshake; check we can decrypt data, return "good-Conn" if true
 socket.on("serverMessage", (eData) => {
-    console.log("got data")
     try{
         let message = decrypt(window.mKey, eData[0], eData[1], eData[2])
         message = message.toString().split("<SEPERATOR>")
