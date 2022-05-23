@@ -44,18 +44,20 @@
 </body>
 
 <script>
+
 socket.on("ServKey", (SKey) => {
     console.log("keyExchange")
     socket.emit("PubKey", (ECDHE()));
     window.ServKey = SKey
     let secret = SecGen();
-    window.mKey = masterKey(secret,"")
+    localStorage.setItem("key",JSON.stringify(Array.from(masterKey(secret,""))))
     //TODO add some method for identical derivation of a nonce for the MKEY, possibly server/client picks with AEAD channel
 })
 //handshake; check we can decrypt data, return "good-Conn" if true
 socket.on("serverMessage", (eData) => {
+    console.log(Uint8Array.from(JSON.parse(window.localStorage.getItem("key"))))
     try{
-        let message = decrypt(window.mKey, eData[0], eData[1], eData[2])
+        let message = decrypt(buffer.Buffer.from(Uint8Array.from(JSON.parse(window.localStorage.getItem("key")))), eData[0], eData[1], eData[2])
         message = message.toString().split("<SEPERATOR>")
         newDataHandler(message)
         socket.emit("Got Message")
@@ -65,6 +67,6 @@ socket.on("serverMessage", (eData) => {
         socket.emit("Bad-Conn")
     }
 })
+
 </script>
 </html>
-
