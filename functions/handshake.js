@@ -2,7 +2,7 @@ const ECDHE = require("./ECDH/ECDHE");
 const masterKey = require("./ECDH/masterKey");
 const encrypt = require("./chacha/encrypt");
 const decrypt = require("./chacha/decrypt");
-function handshake(socket, rCookie, keyMap){
+function handshake(socket, uCookie, userMap){
     let mKey = ""
     let Keys = ECDHE()
     socket.emit("ServKey", (Keys.getPublicKey()))
@@ -19,11 +19,11 @@ function handshake(socket, rCookie, keyMap){
     })
     socket.on("clientMessage", (eData) => {
         if(decrypt(mKey, eData[0], eData[1], eData[2]).toString() === "good-Conn"){
-            //generate cookie, send new cookie
-            keyMap.set(rCookie,mKey)
-            console.log("Cookie: " +rCookie+" set for key: ")
-            console.log(mKey)
-            console.log("\n\n")
+            //add the key to the map
+            //copy over the values of the secCookie and username
+            userMap.set(uCookie,[mKey,userMap.get(uCookie)[1],userMap.get(uCookie)[2]])
+            console.log("New UserData set: ")
+            console.log(userMap.get(uCookie))
         }
     })
     socket.on("Bad-Conn", () => {
