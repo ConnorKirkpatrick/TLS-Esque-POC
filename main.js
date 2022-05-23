@@ -39,7 +39,7 @@ app.get("/", (req, res) => {
         rCookie = randomString()
         res.cookie("SID",rCookie,{httpOnly:true, maxAge:5*60*1000})
     }
-    res.sendFile(__dirname + "/static/mainPage.html");
+    res.sendFile(__dirname + "/static/chatRoom.html");
     //only after the file is sent can we act on the socket object
     io.once("connection", (socket) => {
         console.log("CLIENT CONNECTED")
@@ -64,3 +64,30 @@ function randomString(size = 21) {
         .toString('base64')
         .slice(0, size)
 }
+
+/*
+TODO:
+2 cookies, user cookie and security cookie
+user cookie is session cookie
+security cookie times out
+
+client opens page
+if no cookie
+    add cookie (security)
+    ask user to pick and account name
+    save account name to cookie with key
+    redirect to chat page
+if account cookie but no secure cookie
+    re-do handshake
+if security cookie but no account cookie
+    ask for username
+    redirect to chat page
+
+if both cookie
+chat page
+    select other users on the left side to chat
+    non-persistent messages (snapchat)
+    message area is scrollable div (?)
+    messages sent are colour coded, left/right aligned per user
+
+ */
