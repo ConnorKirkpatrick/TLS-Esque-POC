@@ -26,6 +26,7 @@ let cookieKey = masterKey(crypto.randomBytes(12), crypto.randomBytes(12)).toStri
 /// user cookie and secure are generated randomly as soon as one is missing
 /// key and username are added later when needed/obtained
 let userMap = new Map()
+let nameMap = new Map()
 
 app.use(cookieParser(cookieKey))
 app.set("socketio", io)
@@ -93,44 +94,11 @@ app.get("/", (req, res) => {
         }
         else{
             console.log("Got cookie, using old key")
-            socket.on("clientMessage", (encrypted) => {
-                messageHandler(encrypted, uName, userMap)
-            })
-
-
         }
-
-
+        socket.on("clientMessage", (encrypted) => {
+            messageHandler(encrypted, uName, userMap, nameMap,socket)
+        })
     })
-    /*
-
-    let mKey =  userMap.get(sCookie)
-
-    console.log("COOKIE:" + sCookie)
-    //we set the cookie in the header when we send the file with res
-    if(mKey === undefined){
-        rCookie = randomString()
-        res.cookie("SID",rCookie,{httpOnly:true, maxAge:5*60*1000})
-    }
-    res.sendFile(__dirname + "/static/chatRoom.html");
-    //only after the file is sent can we act on the socket object
-    io.once("connection", (socket) => {
-        console.log("CLIENT CONNECTED MESSAGING")
-        socket.emit("SERVER-HELLO")
-        if(mKey === undefined){
-            console.log("Undefined key")
-            handshake(socket, rCookie, userMap)
-        }
-        else{
-            console.log("Got cookie, using old key: ")
-            console.log(mKey)
-        }
-
-    })
-
-     */
-
-
 });
 
 function randomString(size = 21) {
@@ -152,22 +120,12 @@ if no cookie
     ask user to pick and account name
     save account name to cookie with key
     redirect to chat page
-    do this as an alert popup?
-        else how do I keep the client side key without saving to the memory
-        technically can use localStorage.set/get
-        however this puts data in reach of CSS scripts
-        possibly try to clear it first?
-        probably best to use a prompt window
-            allows all comms to be encrypted with the key
-            probably simpler
-if account cookie but no secure cookie
-    re-do handshake
-if security cookie but no account cookie
-    ask for username
-    redirect to chat page
-
+    do this as an alert popup
+        check usernames, do not allow duplicates
 if both cookie
 chat page
+    current issue, the username persists between sessions, would be nice if it got cleared
+
     select other users on the left side to chat
     non-persistent messages (snapchat)
     message area is scrollable div (?)
