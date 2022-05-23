@@ -17,7 +17,9 @@ const decrypt = require("./functions/chacha/decrypt")
 const crypto = require("crypto");
 
 const handshake = require("./functions/handshake")
+const messageHandler = require("./functions/messageHandler")
 
+const SEPARATOR = "<SEPARATOR>"
 let cookieKey = masterKey(crypto.randomBytes(12), crypto.randomBytes(12)).toString()
 ///map in style { usercookie; [key, secureCookie, username] }
 ///user cookie is session length, secure cookie times out every 5 mins
@@ -48,12 +50,7 @@ app.get("/", (req, res) => {
     let uCookie = ""
     let secCookie = ""
     let userData = userMap.get(uName)
-    console.log("DATA: ")
-    console.log(userData)
-    console.log("")
-    console.log("SEC COOKIE: ")
-    console.log(sCookie)
-    console.log("\n")
+    let flag = false
     if(userData === undefined){
         ///create a session cookie for the userData
         uCookie = randomString()
@@ -67,6 +64,9 @@ app.get("/", (req, res) => {
         //add this data to the map
         userMap.set(uCookie,["",secCookie,""])
         uName = uCookie
+
+        //make the flag true so we ask for a user name
+        flag = true
     }
     else if(sCookie === undefined){
         ///sCookie has timed out, lets give it a new one and ensure that the handshake is redone
@@ -85,11 +85,21 @@ app.get("/", (req, res) => {
             ///the security cookie has timed out
             ///time to create a new handshake value
             console.log("Undefined security cookie, generating new handshake")
-            handshake(socket, uName, userMap)
+            handshake(socket, uName, userMap, flag)
+            socket.on("Bad-Conn", () => {
+                console.log("Handshake failed")
+            })
+
         }
         else{
             console.log("Got cookie, using old key")
+            socket.on("clientMessage", (encrypted) => {
+                messageHandler(encrypted, uName, userMap)
+            })
+
+
         }
+
 
     })
     /*
@@ -147,6 +157,9 @@ if no cookie
         technically can use localStorage.set/get
         however this puts data in reach of CSS scripts
         possibly try to clear it first?
+        probably best to use a prompt window
+            allows all comms to be encrypted with the key
+            probably simpler
 if account cookie but no secure cookie
     re-do handshake
 if security cookie but no account cookie
