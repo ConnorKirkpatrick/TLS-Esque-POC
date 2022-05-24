@@ -12,6 +12,9 @@ function newDataHandler(data){
         case "goodUser":
             localStorage.setItem("UName",data[1])
             break
+        case "newUser":
+            console.log("New user: " + data[1])
+            break;
         default:
             console.log(data.toString())
     }

@@ -22,7 +22,7 @@ function handshake(socket, uName, userMap, flag){
         if(decrypt(mKey, eData[0], eData[1], eData[2]).toString() === "good-Conn"){
             //add the key to the map
             //copy over the values of the secCookie and username
-            userMap.set(uName,[mKey,userMap.get(uName)[1],userMap.get(uName)[2]])
+            userMap.set(uName,[mKey,userMap.get(uName)[1],userMap.get(uName)[2],socket.id])
             console.log("New UserData set: ")
             console.log(userMap.get(uName))
             if(flag){

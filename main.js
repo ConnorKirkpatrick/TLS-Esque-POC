@@ -21,12 +21,12 @@ const messageHandler = require("./functions/messageHandler")
 
 const SEPARATOR = "<SEPARATOR>"
 let cookieKey = masterKey(crypto.randomBytes(12), crypto.randomBytes(12)).toString()
-///map in style { usercookie; [key, secureCookie, username] }
+///map in style { usercookie; [key, secureCookie, username, socketID] }
 ///user cookie is session length, secure cookie times out every 5 mins
 /// user cookie and secure are generated randomly as soon as one is missing
 /// key and username are added later when needed/obtained
 let userMap = new Map()
-let nameMap = new Map()
+let nameMap = []
 
 app.use(cookieParser(cookieKey))
 app.set("socketio", io)
@@ -59,11 +59,11 @@ app.get("/", (req, res) => {
 
         ///also means we dont have a secure cookie, so add that too
         secCookie = randomString()
-        res.cookie("SID",secCookie,{httpOnly:true, maxAge:0.1*60*1000})
+        res.cookie("SID",secCookie,{httpOnly:true, maxAge:1*60*1000})
         ///make sure we flag sCookie as undefined so we perform a new handshake
         sCookie = undefined
         //add this data to the map
-        userMap.set(uCookie,["",secCookie,""])
+        userMap.set(uCookie,["",secCookie,"",""])
         uName = uCookie
 
         //make the flag true so we ask for a user name
@@ -74,7 +74,7 @@ app.get("/", (req, res) => {
         secCookie = randomString()
         res.cookie("SID",secCookie,{httpOnly:true, maxAge:5*60*1000})
         ///lets add the new data back to the userMap, blank the key but keep the username
-        userMap.set(uName,["",secCookie,userMap.get(uName)[2]])
+        userMap.set(uName,["",secCookie,userMap.get(uName)[2],userMap.get(uName)[3]])
     }
     res.sendFile(__dirname + "/static/chatRoom.html");
 
@@ -94,13 +94,16 @@ app.get("/", (req, res) => {
         }
         else{
             console.log("Got cookie, using old key")
+            userMap.set(uName,[userData[0],userData[1],userData[2],socket.id])
         }
+        //for every encrypted message, pass it to the message handler function
         socket.on("clientMessage", (encrypted) => {
-            messageHandler(encrypted, uName, userMap, nameMap,socket)
+            messageHandler(encrypted, uName, userMap, nameMap,socket, io)
         })
     })
 });
 
+//generate the random string, used to generate cookie values
 function randomString(size = 21) {
     return Crypto
         .randomBytes(size)
