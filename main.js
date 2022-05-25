@@ -100,7 +100,7 @@ app.get("/", (req, res) => {
             let data = "newUser<SEPARATOR>"+Array.from(nameMap)
             let eData = encrypt(userData[0], data)
             socket.emit("serverMessage", (eData))
-
+            console.log(nameMap)
 
         }
         //for every encrypted message, pass it to the message handler function, needed for all users
@@ -149,6 +149,7 @@ if no cookie
 if both cookie
 chat page
     current issue, the username persists between sessions, would be nice if it got cleared
+    possible issue, client does not request newClient when key is refreshed
 
     select other users on the left side to chat
     non-persistent messages (snapchat)
