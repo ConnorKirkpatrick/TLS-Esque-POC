@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" style="height: 100%; min-height: 100%; min-width: 100%">
+<link rel="stylesheet" href="static/chatRoom/chatRoom.css">
 <script src="/socket.io/socket.io.js"></script>
 <script>
     let socket = io();
@@ -24,20 +25,27 @@
     <style>
         body { margin: 0; padding-bottom: 3rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
 
-        #form { width: 80%; background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: absolute; bottom: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
-        #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
+                #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
         #input:focus { outline: none; }
-        #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
 
         #messages { list-style-type: none; margin: 0; padding: 0; }
         #messages > li { padding: 0.5rem 1rem; }
         #messages > li:nth-child(odd) { background: #efefef; }
     </style>
 </head>
-<body style="height: 100%; min-height: 100%; margin: 0; padding: 0">
-    <div style="float: left; min-height: 100%; width: 20%; background: mediumaquamarine" id="participants"></div>
-    <div style="float: left; min-height: 100%; width: 80%; background: #666; ">
-        <ul id="messages"></ul>
+<body style="height: 100%; min-height: 100%; width: 100%; margin: 0; padding: 0">
+    <div style="float: left; min-height: 100%; width: 20%; background: mediumaquamarine;" id="participants">
+        <button class="messageClient" onclick="test(this)"></button>
+    </div>
+    <div style="float: left; height: 100%; min-height: 100%; min-width: 80%;">
+        <div class="messageArea" id="messages">
+            <div class="messageBox">
+                <div class="messageReceived">Some data<p>More data</div>
+            </div>
+            <div class="messageBox">
+                <div class="messageSent">Some response</div>
+            </div>
+        </div>
         <form id="form" action="">
             <input id="input" autocomplete="off" /><button>Send</button>
         </form>
@@ -70,6 +78,10 @@ socket.on("serverMessage", (eData) => {
         socket.emit("Bad-Conn")
     }
 })
+
+function test(obj){
+    obj.className = "messageClientSelected"
+}
 
 </script>
 </html>
