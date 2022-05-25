@@ -11,6 +11,7 @@ function newDataHandler(data){
             break;
         case "goodUser":
             localStorage.setItem("UName",data[1])
+            document.title = data[1]+"'s chat room"
             break
         case "newUser":
             console.log("New user: " + data[1])
