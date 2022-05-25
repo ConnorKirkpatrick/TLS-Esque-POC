@@ -93,8 +93,12 @@ app.get("/", (req, res) => {
 
         }
         else{
+            //run this for when an existing user re-connects
             console.log("Got cookie, using old key")
             userMap.set(uName,[userData[0],userData[1],userData[2],socket.id])
+            let data = "newUser<SEPARATOR>"+Array.from(nameMap)
+            let eData = encrypt(userData[0], data)
+            socket.emit("serverMessage", (eData))
         }
         //for every encrypted message, pass it to the message handler function
         socket.on("clientMessage", (encrypted) => {
@@ -134,5 +138,11 @@ chat page
     non-persistent messages (snapchat)
     message area is scrollable div (?)
     messages sent are colour coded, left/right aligned per user
+
+    upon page refresh, send request for usernames to server, repopulate the list
+    possibly need a heartbeat to check when users a not online?
+        seems to resource intensive
+        when users leave/ socket.on("Disconnect") clear the socket from the user object
+        if after 10s the socket is not back drop the user object, send newClient again to refresh the data
 
  */
