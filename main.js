@@ -87,7 +87,7 @@ app.get("/", (req, res) => {
             ///the security cookie has timed out
             ///time to create a new handshake value
             console.log("Undefined security cookie, generating new handshake")
-            handshake(socket, uName, userMap, flag)
+            handshake(socket, uName, userMap, flag, io, nameMap)
             socket.on("Bad-Conn", () => {
                 console.log("Handshake failed")
             })

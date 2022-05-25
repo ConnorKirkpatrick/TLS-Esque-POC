@@ -2,8 +2,9 @@ const ECDHE = require("./ECDH/ECDHE");
 const masterKey = require("./ECDH/masterKey");
 const encrypt = require("./chacha/encrypt");
 const decrypt = require("./chacha/decrypt");
+const notifyNewUser = require("./chatting/notifyNewUsers");
 
-function handshake(socket, uName, userMap, flag){
+function handshake(socket, uName, userMap, flag, io, nameMap){
     let mKey = ""
     let Keys = ECDHE()
     socket.emit("ServKey", (Keys.getPublicKey()))
@@ -25,16 +26,21 @@ function handshake(socket, uName, userMap, flag){
             userMap.set(uName,[mKey,userMap.get(uName)[1],userMap.get(uName)[2],socket.id])
             console.log("New UserData set: ")
             console.log(userMap.get(uName))
+            //if the flag is true, this is a brand new user and thus needs a username to be picked
             if(flag){
                 let data = "setUser<SEPARATOR>"
                 let eData = encrypt(userMap.get(uName)[0], data)
                 socket.emit("serverMessage", (eData))
             }
+        //if not a new users, we should update their userMap
+            else{
+                notifyNewUser(nameMap, io, userMap)
+            }
         }
     })
     socket.on("Bad-Conn", () => {
         //resend data, or clear cookie and re-construct channel
-        //console.log("Failed to construct new channel")
+        console.log("Failed to construct new channel")
     })
 }
 
