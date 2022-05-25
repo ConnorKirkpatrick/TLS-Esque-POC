@@ -15,6 +15,7 @@ function newDataHandler(data){
             break
         case "newUser":
             console.log("New user: " + data[1])
+            addClients(data[1].split(","))
             break;
         default:
             console.log(data.toString())
