@@ -76,7 +76,7 @@ app.get("/", (req, res) => {
         ///lets add the new data back to the userMap, blank the key but keep the username
         userMap.set(uName,["",secCookie,userMap.get(uName)[2],userMap.get(uName)[3]])
     }
-    res.sendFile(__dirname + "/static/chatRoom.html");
+    res.sendFile(__dirname + "/static/chatRoom/chatRoom.html");
 
     ///establish socket connection
     io.once("connection", (socket) => {
@@ -125,6 +125,7 @@ if no cookie
     redirect to chat page
     do this as an alert popup
         check usernames, do not allow duplicates
+    user can cancel giving username, just re-trigger the popup
 if both cookie
 chat page
     current issue, the username persists between sessions, would be nice if it got cleared
