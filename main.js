@@ -18,6 +18,7 @@ const crypto = require("crypto");
 
 const handshake = require("./functions/handshake")
 const messageHandler = require("./functions/messageHandler")
+const notifyNewUser = require("./functions/chatting/notifyNewUsers");
 
 const SEPARATOR = "<SEPARATOR>"
 let cookieKey = masterKey(crypto.randomBytes(12), crypto.randomBytes(12)).toString()
@@ -93,16 +94,31 @@ app.get("/", (req, res) => {
 
         }
         else{
-            //run this for when an existing user re-connects
+            //socket events for existing users
             console.log("Got cookie, using old key")
             userMap.set(uName,[userData[0],userData[1],userData[2],socket.id])
             let data = "newUser<SEPARATOR>"+Array.from(nameMap)
             let eData = encrypt(userData[0], data)
             socket.emit("serverMessage", (eData))
+
+
         }
-        //for every encrypted message, pass it to the message handler function
+        //for every encrypted message, pass it to the message handler function, needed for all users
         socket.on("clientMessage", (encrypted) => {
             messageHandler(encrypted, uName, userMap, nameMap,socket, io)
+        })
+
+        socket.on("disconnect", () =>{
+            userData = userMap.get(uName)
+            userMap.set(uName,[userData[0],userData[1],userData[2],""])
+            setTimeout(() => {
+                if(userMap.get(uName)[3] === ""){
+                    console.log(userMap.get(uName)[2] + " has disconnected")
+                    nameMap.splice(nameMap.indexOf(userMap.get(uName)[2]),1)
+                    userMap.delete(uName)
+                    notifyNewUser(nameMap, io, userMap)
+                }
+            },5000, uName)
         })
     })
 });
