@@ -5,9 +5,7 @@ function addClients(clientList){
         sidebar.removeChild(sidebar.lastElementChild)
     }
     clientList.forEach((username) => {
-        if(username !== selfName){
-            //add new clients to the side bar
-            //sidebar += '<button class="messageClient" onclick="test(this)">username</button>"'
+        if(username !== selfName && username !== ""){
             let newButton = document.createElement("button")
             newButton.className = "messageClient"
             newButton.id = username
