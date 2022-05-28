@@ -22,7 +22,7 @@ const notifyNewUser = require("./functions/chatting/notifyNewUsers");
 
 const SEPARATOR = "<SEPARATOR>"
 let cookieKey = masterKey(crypto.randomBytes(12), crypto.randomBytes(12)).toString()
-///map in style { usercookie; [key, secureCookie, username, socketID] }
+///map in style { usercookie; [key, secureCookie, username, socketID, timerID] }
 ///user cookie is session length, secure cookie times out every 5 mins
 /// user cookie and secure are generated randomly as soon as one is missing
 /// key and username are added later when needed/obtained
@@ -53,6 +53,7 @@ app.get("/", (req, res) => {
     let secCookie = ""
     let userData = userMap.get(uName)
     let flag = false
+    console.log(userMap)
     if(userData === undefined){
         ///create a session cookie for the userData
         uCookie = randomString()
@@ -64,10 +65,11 @@ app.get("/", (req, res) => {
         ///make sure we flag sCookie as undefined so we perform a new handshake
         sCookie = undefined
         //add this data to the map
-        userMap.set(uCookie,["",secCookie,"",""])
+        userMap.set(uCookie,["",secCookie,"","",""])
         uName = uCookie
 
         //make the flag true so we ask for a user name
+        console.log("Need username")
         flag = true
     }
     else if(sCookie === undefined){
@@ -75,7 +77,8 @@ app.get("/", (req, res) => {
         secCookie = randomString()
         res.cookie("SID",secCookie,{httpOnly:true, maxAge:5*60*1000})
         ///lets add the new data back to the userMap, blank the key but keep the username
-        userMap.set(uName,["",secCookie,userMap.get(uName)[2],userMap.get(uName)[3]])
+        userData = userMap.get(uName)
+        userMap.set(uName,["",secCookie,userData[2],userData[3],userData[4]])
     }
     res.sendFile(__dirname + "/static/chatRoom/chatRoom.html");
 
@@ -88,29 +91,33 @@ app.get("/", (req, res) => {
             ///time to create a new handshake value
             console.log("Undefined security cookie, generating new handshake")
             handshake(socket, uName, userMap, flag, io, nameMap)
-            socket.on("Bad-Conn", () => {
-                console.log("Handshake failed")
-            })
-
+            //with new cookie and key set, set a 5 min timer to redo the handshake.
+            //clear the old timer when this is performed, this would only happen upon refresh and thus before the other timer executes
+            //move this into the handshake
+            let userData = userMap.get(uName)
+            if(userData[4] !== ""){ clearTimeout(userData[4])}
+            else{
+                let timer = handshakeTimer(socket, uName, userMap, flag, io, nameMap)
+                userMap.set(uName,[userData[0],userData[1],userData[2],userData[3],timer])
+            }
         }
         else{
             //socket events for existing users
             console.log("Got cookie, using old key")
-            userMap.set(uName,[userData[0],userData[1],userData[2],socket.id])
+            console.log("User Key: " + userData[0])
+            console.log(userData)
+            userMap.set(uName,[userData[0],userData[1],userData[2],socket.id, userData[4]])
             let data = "newUser<SEPARATOR>"+Array.from(nameMap)
             let eData = encrypt(userData[0], data)
             socket.emit("serverMessage", (eData))
             console.log(nameMap)
 
         }
-        //for every encrypted message, pass it to the message handler function, needed for all users
-        socket.on("clientMessage", (encrypted) => {
-            messageHandler(encrypted, uName, userMap, nameMap,socket, io)
-        })
+
 
         socket.on("disconnect", () =>{
             userData = userMap.get(uName)
-            userMap.set(uName,[userData[0],userData[1],userData[2],""])
+            userMap.set(uName,[userData[0],userData[1],userData[2],"",userData[4]])
             setTimeout(() => {
                 if(userMap.get(uName)[3] === ""){
                     console.log(userMap.get(uName)[2] + " has disconnected")
@@ -130,7 +137,13 @@ function randomString(size = 21) {
         .toString('base64')
         .slice(0, size)
 }
-
+function handshakeTimer(socket, uName,userMap,flag,io,nameMap){
+    return setTimeout(() => {
+        console.log("REDOING HANDSHAKE")
+        handshake(socket, uName, userMap, false, io, nameMap)
+        handshakeTimer(socket, uName,userMap,false,io,nameMap)
+    }, 15*1000,socket,uName,userMap,flag,io,nameMap)
+}
 /*
 TODO:
 2 cookies, user cookie and security cookie
@@ -149,7 +162,9 @@ if no cookie
 if both cookie
 chat page
     current issue, the username persists between sessions, would be nice if it got cleared
-    possible issue, client does not request newClient when key is refreshed
+    possible issue, no key renegotiation after 5 mins if the client does not refresh the page
+        add some timer/automated system to perform the key change
+        possibly need to add a delay to the client so they do not try to send messages during the re-negotiation
 
     select other users on the left side to chat
     non-persistent messages (snapchat)
