@@ -8,8 +8,6 @@ const handshakeTimer = require("../handshakeTimer")
 
 function handshake(socket, uName, userMap, flag, io, nameMap, handShake) {
     console.log("Handshake start")
-    console.log(handShake)
-    console.log(socket.id)
     let mKey = ""
     let Keys = ECDHE()
     socket.removeAllListeners("clientMessage")
