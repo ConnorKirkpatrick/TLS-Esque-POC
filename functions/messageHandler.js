@@ -1,8 +1,8 @@
 const decrypt = require("./chacha/decrypt");
 const getUsername = require("./username/getUsername");
 const notifyNewUser = require("./chatting/notifyNewUsers");
-//const handshake = require("./chatting/handshake")
 const handshakeTimer = require("./handshakeTimer")
+const forwardMessage = require("./chatting/forwardMessage")
 
 function messageHandler(eData, uName, userMap, nameMap, socket, io, handshake){
     ///because we cannot use "socket.on" for encrypted messages without leaking data, we instead wrap the data inside of a "client message" to be unwrapped here
@@ -21,6 +21,11 @@ function messageHandler(eData, uName, userMap, nameMap, socket, io, handshake){
                 let timer = handshakeTimer(socket, uName, userMap, io, nameMap, handshake)
                 userMap.set(uName,[userData[0],userData[1],userData[2],userData[3],timer])
             }
+            break;
+        case "MESSAGE":
+            //message from client to receiver
+            //messageTarget, message contents
+            forwardMessage(message[1],message[2],userMap,io)
             break;
         default:
             console.log("Default: "+message)
