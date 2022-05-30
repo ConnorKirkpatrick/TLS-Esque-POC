@@ -19,6 +19,5 @@ flow:
   * find cookie entry that contains the master key for the connection
   * decrypt message with master key
 
-https://www.npmjs.com/package/node-aes-gcm
-https://www.npmjs.com/package/chacha
-https://nodejs.org/docs/latest/api/crypto.html
+Vulnerabilities;
+* MITM attack, prevent by using signing on initial public key exchange

@@ -140,38 +140,11 @@ function randomString(size = 21) {
         .toString('base64')
         .slice(0, size)
 }
-///CLEAR TIMEOUT, UPDATE THE COOKIE
 /*
 TODO:
-2 cookies, user cookie and security cookie
-user cookie is session cookie
-security cookie times out
-
-client opens page
-if no cookie
-    add cookie (security)
-    ask user to pick and account name
-    save account name to cookie with key
-    redirect to chat page
-    do this as an alert popup
-        check usernames, do not allow duplicates
-    user can cancel giving username, just re-trigger the popup
-if both cookie
-chat page
-    current issue, the username persists between sessions, would be nice if it got cleared
-    possible issue, no key renegotiation after 5 mins if the client does not refresh the page
-        add some timer/automated system to perform the key change
-        possibly need to add a delay to the client so they do not try to send messages during the re-negotiation
-
-    select other users on the left side to chat
-    non-persistent messages (snapchat)
-    message area is scrollable div (?)
-    messages sent are colour coded, left/right aligned per user
-
-    upon page refresh, send request for usernames to server, repopulate the list
-    possibly need a heartbeat to check when users a not online?
-        seems to resource intensive
-        when users leave/ socket.on("Disconnect") clear the socket from the user object
-        if after 10s the socket is not back drop the user object, send newClient again to refresh the data
-
+Issue; client can message another client who is not chatting with them, need a way to prevent this
+Issue; clients can send messages when no target selected; disable form when no valid target selected
+Issue; client area does not extend with message area when scrollable, possibly make contained scrollable div?
+    or make other parts of the screen absolute positioning
+Issue; blank messages can be send
  */
