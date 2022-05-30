@@ -7,7 +7,12 @@ function addClients(clientList){
     clientList.forEach((username) => {
         if(username !== selfName && username !== ""){
             let newButton = document.createElement("button")
-            newButton.className = "messageClient"
+            if(username === window.localStorage.getItem("targetClient")){
+                newButton.className = "messageClientSelected"
+            }
+            else{
+                newButton.className = "messageClient"
+            }
             newButton.id = username
             newButton.innerText = username
             sidebar.appendChild(newButton)
