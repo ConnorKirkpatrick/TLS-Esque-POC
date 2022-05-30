@@ -17,6 +17,9 @@ function newDataHandler(data){
             console.log("New user: " + data[1])
             addClients(data[1].split(","))
             break;
+        case "newMessage":
+            receiveMessage(data[1],false)
+            break;
         default:
             console.log(data.toString())
     }
