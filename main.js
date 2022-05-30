@@ -15,6 +15,7 @@ const encrypt = require("./functions/chacha/encrypt")
 const crypto = require("crypto");
 
 const handshake = require("./functions/chatting/handshake")
+const messageHandler = require("./functions/messageHandler")
 const notifyNewUser = require("./functions/chatting/notifyNewUsers");
 const handshakeTimer = require("./functions/handshakeTimer")
 
@@ -107,6 +108,10 @@ app.get("/", (req, res) => {
             let data = "newUser<SEPARATOR>"+Array.from(nameMap)
             let eData = encrypt(userData[0], data)
             socket.emit("serverMessage", (eData))
+            //add the standard message handler, it was not initiated by the handshake this time
+            socket.on("clientMessage", (eData) => {
+                messageHandler(eData, uName, userMap, nameMap, socket, io, handshake)
+            })
         }
 
 
