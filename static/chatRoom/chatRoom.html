@@ -78,7 +78,13 @@ socket.on("serverMessage", (eData) => {
     }
 })
 
-
+document.getElementById("form").addEventListener('keyup', function(event) {
+    if (event.code === 'Enter')
+    {
+        event.preventDefault();
+        sendMessage()
+    }
+})
 
 </script>
 </html>
