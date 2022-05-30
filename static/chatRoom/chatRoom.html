@@ -19,6 +19,7 @@
 <script src="static/functions/generalFunctions/newDataHandler.js"></script>
 <script src="static/functions/generalFunctions/setUser.js"></script>
 <script src="static/functions/generalFunctions/addClients.js"></script>
+<script src="static/functions/generalFunctions/sendMessage.js"></script>
 
 <head>
     <meta charset="UTF-8">
@@ -45,9 +46,9 @@
                 <div class="messageSent">Some response</div>
             </div>
         </div>
-        <form id="form" action="">
-            <input id="input" autocomplete="off" /><button>Send</button>
-        </form>
+        <div id="form">
+            <input id="input" autocomplete="off" /><button onclick=sendMessage()>Send</button>
+        </div>
     </div>
 </body>
 
