@@ -10,15 +10,13 @@ const cookieParser = require("cookie-parser")
 app.use("/static", express.static(path.join(__dirname, "./static/")));
 
 const Crypto = require("crypto")
-const ECDHE = require("./functions/ECDH/ECDHE")
 const masterKey = require("./functions/ECDH/masterKey")
 const encrypt = require("./functions/chacha/encrypt")
-const decrypt = require("./functions/chacha/decrypt")
 const crypto = require("crypto");
 
-const handshake = require("./functions/handshake")
-const messageHandler = require("./functions/messageHandler")
+const handshake = require("./functions/chatting/handshake")
 const notifyNewUser = require("./functions/chatting/notifyNewUsers");
+const handshakeTimer = require("./functions/handshakeTimer")
 
 const SEPARATOR = "<SEPARATOR>"
 let cookieKey = masterKey(crypto.randomBytes(12), crypto.randomBytes(12)).toString()
@@ -31,7 +29,6 @@ let nameMap = []
 
 app.use(cookieParser(cookieKey))
 app.set("socketio", io)
-
 let PORT = Number(process.env.PORT || 80);
 server.listen(PORT, () => {
     console.log("Listening on " + PORT);
@@ -53,8 +50,8 @@ app.get("/", (req, res) => {
     let secCookie = ""
     let userData = userMap.get(uName)
     let flag = false
-    console.log(userMap)
     if(userData === undefined){
+        ///this is a brand new user, needs a user key and key set generated
         ///create a session cookie for the userData
         uCookie = randomString()
         res.cookie("uName",uCookie,{httpOnly:true})
@@ -67,19 +64,24 @@ app.get("/", (req, res) => {
         //add this data to the map
         userMap.set(uCookie,["",secCookie,"","",""])
         uName = uCookie
-
         //make the flag true so we ask for a user name
         console.log("Need username")
         flag = true
     }
-    else if(sCookie === undefined){
-        ///sCookie has timed out, lets give it a new one and ensure that the handshake is redone
-        secCookie = randomString()
-        res.cookie("SID",secCookie,{httpOnly:true, maxAge:5*60*1000})
-        ///lets add the new data back to the userMap, blank the key but keep the username
-        userData = userMap.get(uName)
-        userMap.set(uName,["",secCookie,userData[2],userData[3],userData[4]])
+    else {
+        if(sCookie === undefined){
+            ///this is an old user we have seen before
+            ///sCookie has timed out, lets give it a new one and ensure that the handshake is redone
+            secCookie = randomString()
+            res.cookie("SID",secCookie,{httpOnly:true, maxAge:5*60*1000})
+            ///lets add the new data back to the userMap, blank the key but keep the username
+            ///also add a timer for a refresh of the handshake
+            userData = userMap.get(uName)
+            userMap.set(uName,["",secCookie,userData[2],userData[3],userData[4]])
+        }
     }
+
+
     res.sendFile(__dirname + "/static/chatRoom/chatRoom.html");
 
     ///establish socket connection
@@ -90,32 +92,28 @@ app.get("/", (req, res) => {
             ///the security cookie has timed out
             ///time to create a new handshake value
             console.log("Undefined security cookie, generating new handshake")
-            handshake(socket, uName, userMap, flag, io, nameMap)
-            //with new cookie and key set, set a 5 min timer to redo the handshake.
-            //clear the old timer when this is performed, this would only happen upon refresh and thus before the other timer executes
-            //move this into the handshake
-            let userData = userMap.get(uName)
-            if(userData[4] !== ""){ clearTimeout(userData[4])}
-            else{
-                let timer = handshakeTimer(socket, uName, userMap, flag, io, nameMap)
-                userMap.set(uName,[userData[0],userData[1],userData[2],userData[3],timer])
-            }
+            handshake(socket, uName, userMap, flag, io, nameMap, handshake)
         }
         else{
             //socket events for existing users
             console.log("Got cookie, using old key")
-            console.log("User Key: " + userData[0])
-            console.log(userData)
-            userMap.set(uName,[userData[0],userData[1],userData[2],socket.id, userData[4]])
+            //clear the old timer as it will be using the old socket
+            clearInterval(userData[4]);
+            //update the userMap with the new client socket
+            userMap.set(uName,[userData[0], userData[1], userData[2],socket.id, userData[4]])
+            //add a new timer for a refresh of the handshake
+            handshakeTimer(socket, uName,userMap,io,nameMap,handshake)
+            //send the returning user the nameMap so they can update their client list
             let data = "newUser<SEPARATOR>"+Array.from(nameMap)
             let eData = encrypt(userData[0], data)
             socket.emit("serverMessage", (eData))
-            console.log(nameMap)
-
         }
 
 
         socket.on("disconnect", () =>{
+            //upon disconnect, clear the socket ID from the user map
+            //if the user doesnt return within 5 seconds (refreshing the page) we assume the user has fully disconnected
+            //when fully disconnected, clear the user from the userMap and the nameMap
             userData = userMap.get(uName)
             userMap.set(uName,[userData[0],userData[1],userData[2],"",userData[4]])
             setTimeout(() => {
@@ -137,13 +135,7 @@ function randomString(size = 21) {
         .toString('base64')
         .slice(0, size)
 }
-function handshakeTimer(socket, uName,userMap,flag,io,nameMap){
-    return setTimeout(() => {
-        console.log("REDOING HANDSHAKE")
-        handshake(socket, uName, userMap, false, io, nameMap)
-        handshakeTimer(socket, uName,userMap,false,io,nameMap)
-    }, 15*1000,socket,uName,userMap,flag,io,nameMap)
-}
+///CLEAR TIMEOUT, UPDATE THE COOKIE
 /*
 TODO:
 2 cookies, user cookie and security cookie

@@ -1,9 +1,10 @@
-const encrypt = require("./chacha/encrypt");
 const decrypt = require("./chacha/decrypt");
 const getUsername = require("./username/getUsername");
 const notifyNewUser = require("./chatting/notifyNewUsers");
+//const handshake = require("./chatting/handshake")
+const handshakeTimer = require("./handshakeTimer")
 
-function messageHandler(eData, uName, userMap, nameMap, socket, io){
+function messageHandler(eData, uName, userMap, nameMap, socket, io, handshake){
     ///because we cannot use "socket.on" for encrypted messages without leaking data, we instead wrap the data inside of a "client message" to be unwrapped here
     /// the first argument is the opcode, the value that tells us what to do with the rest of the data
     let mKey = userMap.get(uName)[0]
@@ -15,12 +16,16 @@ function messageHandler(eData, uName, userMap, nameMap, socket, io){
             //notify all users of a new user
             if(getUsername(uName,message[1], userMap, nameMap, socket)){
                 notifyNewUser(nameMap,io,userMap)
+                //with new cookie and key set along with a valid username, set a 5 min timer to redo the handshake.
+                let userData = userMap.get(uName)
+                let timer = handshakeTimer(socket, uName, userMap, io, nameMap, handshake)
+                userMap.set(uName,[userData[0],userData[1],userData[2],userData[3],timer])
             }
             break;
         default:
             console.log("Default: "+message)
             break;
     }
-
 }
+
 module.exports = messageHandler
