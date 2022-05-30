@@ -23,7 +23,12 @@ function addClients(clientList){
                     console.log("SAME OLD")
                 }
                 else if(document.getElementById(oldTarget) !== null){
+                    //different client to last, make sure old messages are deleted
                     document.getElementById(oldTarget).className ="messageClient"
+                    let messages = document.getElementById("messages")
+                    while(messages.lastChild !== null){
+                        messages.removeChild(messages.lastElementChild)
+                    }
                 }
                 newButton.className = "messageClientSelected"
                 window.localStorage.setItem("targetClient", newButton.id)
