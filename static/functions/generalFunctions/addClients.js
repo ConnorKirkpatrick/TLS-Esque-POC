@@ -12,9 +12,12 @@ function addClients(clientList){
             newButton.innerText = username
             sidebar.appendChild(newButton)
             newButton.addEventListener("click", () =>{
-                let oldTarget = (window.localStorage.getItem("targetClient"))
-                if(oldTarget !== null){
-                    console.log(oldTarget)
+                console.log("Set client")
+                let oldTarget = window.localStorage.getItem("targetClient")
+                if(oldTarget === newButton.id){
+                    console.log("SAME OLD")
+                }
+                else if(document.getElementById(oldTarget) !== null){
                     document.getElementById(oldTarget).className ="messageClient"
                 }
                 newButton.className = "messageClientSelected"
