@@ -4,11 +4,15 @@ function addClients(clientList){
     while(sidebar.lastChild !== null){
         sidebar.removeChild(sidebar.lastElementChild)
     }
+    let flag = false
     clientList.forEach((username) => {
         if(username !== selfName && username !== ""){
             let newButton = document.createElement("button")
             if(username === window.localStorage.getItem("targetClient")){
                 newButton.className = "messageClientSelected"
+                document.getElementById("input").disabled = false
+                document.getElementById("send").disabled = false
+                flag = true
             }
             else{
                 newButton.className = "messageClient"
@@ -32,7 +36,14 @@ function addClients(clientList){
                 }
                 newButton.className = "messageClientSelected"
                 window.localStorage.setItem("targetClient", newButton.id)
+                document.getElementById("input").disabled = false
+                document.getElementById("send").disabled = false
             })
         }
     })
+    if(!flag){
+        window.localStorage.removeItem("targetClient")
+        document.getElementById("input").disabled = true
+        document.getElementById("send").disabled = true
+    }
 }
