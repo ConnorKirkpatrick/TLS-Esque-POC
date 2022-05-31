@@ -143,8 +143,6 @@ function randomString(size = 21) {
 /*
 TODO:
 Issue; client can message another client who is not chatting with them, need a way to prevent this
-Issue; clients can send messages when no target selected; disable form when no valid target selected
 Issue; client area does not extend with message area when scrollable, possibly make contained scrollable div?
     or make other parts of the screen absolute positioning
-Issue; blank messages can be send
  */
