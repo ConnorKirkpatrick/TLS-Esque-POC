@@ -143,6 +143,11 @@ function randomString(size = 21) {
 /*
 TODO:
 Issue; client can message another client who is not chatting with them, need a way to prevent this
+            possibly allow messaging only one client at a time
+            selecting client will send client an alert that they can accept or deny
+            when accepted, clear current messages and allow messaging between the clients
 Issue; client area does not extend with message area when scrollable, possibly make contained scrollable div?
     or make other parts of the screen absolute positioning
+Issue; if handshake fails/hangs, refreshing the page will crash the server
+        add an error catch to re-negotiate handshake and drop the last message
  */
