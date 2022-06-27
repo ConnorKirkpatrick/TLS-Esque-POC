@@ -54,6 +54,7 @@ function handshake(socket, uName, userMap, flag, io, nameMap, handShake) {
     socket.once("Bad-Conn", () => {
         //resend data, or clear cookie and re-construct channel
         console.log("Failed to read clients data, possibly corrupt or with the wrong key")
+        handshake(socket, uName, userMap, flag, io, nameMap, handShake);
     })
 }
 
