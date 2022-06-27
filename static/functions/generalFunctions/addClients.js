@@ -26,6 +26,8 @@ function addClients(clientList){
                 document.getElementById("cover").style.display = "block"; // do this to block actions taking place
                 document.getElementById("cover-Text").innerText = "Waiting for "+ newButton.id +" to accept message request"
 
+                socket.emit("clientMessage", (encrypt(buffer.Buffer.from(Uint8Array.from(JSON.parse(window.localStorage.getItem("key")))),"changeClient<SEPARATOR>"+newButton.id)))
+
 
                 console.log("Set client")
                 let oldTarget = window.localStorage.getItem("targetClient")
