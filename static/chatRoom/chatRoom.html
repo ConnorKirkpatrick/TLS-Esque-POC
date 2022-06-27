@@ -22,6 +22,7 @@
 <script src="static/functions/generalFunctions/sendMessage.js"></script>
 <script src="static/functions/generalFunctions/receiveMessage.js"></script>
 <script src="static/functions/generalFunctions/cancelNewClient.js"></script>
+<script src="static/functions/generalFunctions/denyMessageRequest.js"></script>
 
 <head>
     <meta charset="UTF-8">
@@ -43,7 +44,7 @@
         <button id="cancelNewClient" onclick="cancelNewClient()" style="display: block">Cancel</button>
         <span style="display: none" id="acceptDenySpan">
             <button id="acceptRequest" class="accept">Accept</button>
-            <button id="denyRequest" class="deny" onclick="document.getElementById('cover').style.display='none'">Deny</button>
+            <button id="denyRequest" class="deny" onclick=denyMessageRequest()>Deny</button>
         </span>
     </div>
     <div style="float: left; min-height: 100%; width: 20%; background: mediumaquamarine;" id="participants"></div>
