@@ -8,7 +8,6 @@ function forwardMessage(target, msg, userMap, io){
             let data = "newMessage<SEPARATOR>"+msg
             let eData = encrypt(values[0], data)
             io.to(values[3]).emit("serverMessage", (eData))
-            break
         }
     })
 }
