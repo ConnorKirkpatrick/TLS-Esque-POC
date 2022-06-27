@@ -69,10 +69,33 @@
     width: 100%;
     margin: 0;
     padding: 0;
-    display: block;
+    display: none;
     position: fixed;
     z-index: 2;
     background-color: gray;
     opacity: 70%;
+}
+.cover-Text{
+    position: absolute;
+    left: 40%;
+    right: 40%;
+    top: 50%;
+    bottom: 50%;
+    text-align: center;
+    font-weight: bold;
+}
+#cancelNewClient{
+    position: absolute;
+    left: 40%;
+    right: 40%;
+    top: 60%;
+    text-align: center;
+    font-weight: bold;
+    background: cornflowerblue;
+    padding: 2px;
+    margin: auto;
+}
+#cancelNewClient:hover{
+    background-color: red;
 }
 

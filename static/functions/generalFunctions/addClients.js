@@ -21,6 +21,12 @@ function addClients(clientList){
             newButton.innerText = username
             sidebar.appendChild(newButton)
             newButton.addEventListener("click", () =>{
+                //indicate to server we intend to change client target
+                //do not change target until server acknowleges that the target has accepted
+                document.getElementById("cover").style.display = "block"; // do this to block actions taking place
+                document.getElementById("cover-Text").innerText = "Waiting for "+ newButton.id +" to accept message request"
+
+
                 console.log("Set client")
                 let oldTarget = window.localStorage.getItem("targetClient")
                 if(oldTarget === newButton.id){
