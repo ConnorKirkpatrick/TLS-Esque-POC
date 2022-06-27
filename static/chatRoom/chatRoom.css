@@ -99,3 +99,30 @@
     background-color: red;
 }
 
+.accept{
+    position: absolute;
+    left: 45%;
+    top: 60%;
+    text-align: center;
+    font-weight: bold;
+    background: cornflowerblue;
+    padding: 2px;
+    margin: auto;
+}
+.accept:hover{
+    background-color: green;
+}
+
+.deny{
+    position: absolute;
+    left: 52%;
+    top: 60%;
+    text-align: center;
+    font-weight: bold;
+    background: cornflowerblue;
+    padding: 2px;
+    margin: auto;
+}
+.deny:hover{
+    background-color: red;
+}

@@ -40,7 +40,11 @@
 <body style="height: 100%; min-height: 100%; width: 100%; margin: 0; padding: 0">
     <div class="cover" id="cover">
         <div id="cover-Text" class="cover-Text" ></div>
-        <button id="cancelNewClient" onclick="cancelNewClient()">Cancel</button>
+        <button id="cancelNewClient" onclick="cancelNewClient()" style="display: block">Cancel</button>
+        <span style="display: none" id="acceptDenySpan">
+            <button id="acceptRequest" class="accept">Accept</button>
+            <button id="denyRequest" class="deny" onclick="document.getElementById('cover').style.display='none'">Deny</button>
+        </span>
     </div>
     <div style="float: left; min-height: 100%; width: 20%; background: mediumaquamarine;" id="participants"></div>
     <div style="float: left; height: 100%; min-height: 100%; min-width: 80%;">

@@ -20,6 +20,12 @@ function newDataHandler(data){
         case "newMessage":
             receiveMessage(data[1],false)
             break;
+        case "messageRequest":
+            console.log("New chat request")
+            document.getElementById("cover").style.display = "block"; // do this to block actions taking place
+            document.getElementById("cover-Text").innerText = "Received new chat request from "+data[1]
+            document.getElementById("cancelNewClient").style.display = "none";
+            document.getElementById("acceptDenySpan").style.display = "block";
         default:
             console.log(data.toString())
     }

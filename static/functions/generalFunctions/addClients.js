@@ -25,6 +25,8 @@ function addClients(clientList){
                 //do not change target until server acknowleges that the target has accepted
                 document.getElementById("cover").style.display = "block"; // do this to block actions taking place
                 document.getElementById("cover-Text").innerText = "Waiting for "+ newButton.id +" to accept message request"
+                document.getElementById("cancelNewClient").style.display = "block";
+                document.getElementById("acceptDenySpan").style.display = "none";
 
                 socket.emit("clientMessage", (encrypt(buffer.Buffer.from(Uint8Array.from(JSON.parse(window.localStorage.getItem("key")))),"changeClient<SEPARATOR>"+newButton.id)))
 
