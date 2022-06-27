@@ -63,4 +63,16 @@
     outline: none;
     color: #fff;
 }
+.cover{
+    height: 100%;
+    min-height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: block;
+    position: fixed;
+    z-index: 2;
+    background-color: gray;
+    opacity: 70%;
+}
 
