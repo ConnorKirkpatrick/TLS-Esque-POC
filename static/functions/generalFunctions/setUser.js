@@ -1,4 +1,5 @@
 function setUser(msg){
+    window.localStorage.removeItem("targetClient")
     let username = prompt(msg)
     if(username === null){
         setUser("Please enter a username: ")
