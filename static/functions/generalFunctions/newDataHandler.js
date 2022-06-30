@@ -43,6 +43,10 @@ function newDataHandler(data){
             document.getElementById("input").disabled = false
             document.getElementById("send").disabled = false
             break
+        case "requestDeny":
+            console.log("Chat request denied by: "+data[1])
+            document.getElementById("cover").style.display = "none"; //hide the cover
+            alert(data[1]+" refused your request to chat")
         default:
             console.log(data.toString())
     }
