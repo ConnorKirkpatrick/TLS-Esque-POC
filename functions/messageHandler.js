@@ -42,6 +42,10 @@ function messageHandler(eData, uName, userMap, nameMap, socket, io, handshake){
             console.log("Dropping client: "+message[1]+" By: "+userMap.get(uName)[2])
             changeClient(uName, userMap, message[1], io, 3)
             break;
+        case "cancelRequest":
+            console.log("Cancelling client request: "+message[1])
+            changeClient(uName, userMap, message[1], io, 4)
+            break;
         default:
             console.log("Default: "+message)
             break;

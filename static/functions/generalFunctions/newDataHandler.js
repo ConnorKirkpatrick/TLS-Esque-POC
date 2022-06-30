@@ -68,6 +68,10 @@ function newDataHandler(data){
             //clear stored value
             window.localStorage.removeItem("targetClient")
             break;
+        case "cancelRequest":
+            //hide the cover
+            document.getElementById("cover").style.display = "none";
+            break;
         default:
             console.log(data.toString())
     }
