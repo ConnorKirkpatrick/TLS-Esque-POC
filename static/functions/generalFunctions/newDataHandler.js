@@ -39,10 +39,14 @@ function newDataHandler(data){
             //mark old button as not selected
             if(window.localStorage.getItem("targetClient") !== null){
                 document.getElementById(window.localStorage.getItem("targetClient")).className = "messageClient"
+                //send message to drop old client
+                socket.emit("clientMessage", (encrypt(buffer.Buffer.from(Uint8Array.from(JSON.parse(window.localStorage.getItem("key")))),"dropClient<SEPARATOR>"+window.localStorage.getItem("targetClient"))))
             }
             //mark the button as the current selected
             document.getElementById(data[1]).className = "messageClientSelected"
+            //update stored target value
             window.localStorage.setItem("targetClient", data[1])
+            console.log("Stored: "+window.localStorage.getItem("targetClient"))
             //enable the send button and text box
             document.getElementById("input").disabled = false
             document.getElementById("send").disabled = false
@@ -51,6 +55,19 @@ function newDataHandler(data){
             console.log("Chat request denied by: "+data[1])
             document.getElementById("cover").style.display = "none"; //hide the cover
             alert(data[1]+" refused your request to chat")
+            break;
+        case "clientLeft":
+            console.log(data[1]+" has stopped chatting")
+            //disable text box and button
+            document.getElementById("input").disabled = true
+            document.getElementById("send").disabled = true
+            //display alert
+            alert(data[1]+" has stopped chatting with you")
+            //set client button back to default
+            document.getElementById(data[1]).className = "messageClient"
+            //clear stored value
+            window.localStorage.removeItem("targetClient")
+            break;
         default:
             console.log(data.toString())
     }

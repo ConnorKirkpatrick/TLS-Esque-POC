@@ -24,8 +24,6 @@ function messageHandler(eData, uName, userMap, nameMap, socket, io, handshake){
             }
             break;
         case "MESSAGE":
-            //message from client to receiver
-            //messageTarget, message contents
             forwardMessage(message[1],message[2],userMap,io)
             break;
         case "changeClient":
@@ -33,11 +31,16 @@ function messageHandler(eData, uName, userMap, nameMap, socket, io, handshake){
             break;
         case "acceptClient":
             console.log("Accepted message request from: "+message[1])
+            console.log("Old client was: "+ message[2])
             changeClient(uName, userMap, message[1], io, 1)
             break;
         case "denyClient":
             console.log("Denied Request from: "+message[1])
             changeClient(uName, userMap, message[1], io, 2)
+            break;
+        case "dropClient":
+            console.log("Dropping client: "+message[1]+" By: "+userMap.get(uName)[2])
+            changeClient(uName, userMap, message[1], io, 3)
             break;
         default:
             console.log("Default: "+message)

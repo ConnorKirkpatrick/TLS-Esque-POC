@@ -1,7 +1,6 @@
 const encrypt = require("../chacha/encrypt");
 
 function changeClient(uName, userMap, target, io, flag){
-    console.log("New client request from "+userMap.get(uName)[2]+" for "+target)
     userMap.forEach((values,keys) => {
         if(values[2] === target){
             let data = ""
@@ -15,6 +14,8 @@ function changeClient(uName, userMap, target, io, flag){
                 case 2:
                     data = "requestDeny<SEPARATOR>"+userMap.get(uName)[2]
                     break
+                case 3:
+                    data = "clientLeft<SEPARATOR>"+userMap.get(uName)[2]
             }
             let eData = encrypt(values[0], data)
             io.to(values[3]).emit("serverMessage", (eData))
