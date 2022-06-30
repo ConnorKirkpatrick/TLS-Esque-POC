@@ -29,7 +29,15 @@ function messageHandler(eData, uName, userMap, nameMap, socket, io, handshake){
             forwardMessage(message[1],message[2],userMap,io)
             break;
         case "changeClient":
-            changeClient(uName, userMap, message[1], io)
+            changeClient(uName, userMap, message[1], io, 0)
+            break;
+        case "acceptClient":
+            console.log("Accepted message request from: "+message[1])
+            changeClient(uName, userMap, message[1], io, 1)
+            break;
+        case "denyClient":
+            console.log("Denied Request from: "+message[1])
+            changeClient(uName, userMap, message[1], io, 2)
             break;
         default:
             console.log("Default: "+message)
