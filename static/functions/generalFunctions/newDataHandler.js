@@ -36,6 +36,10 @@ function newDataHandler(data){
             while(messages.lastChild !== null){
                 messages.removeChild(messages.lastElementChild)
             }
+            //mark old button as not selected
+            if(window.localStorage.getItem("targetClient") !== null){
+                document.getElementById(window.localStorage.getItem("targetClient")).className = "messageClient"
+            }
             //mark the button as the current selected
             document.getElementById(data[1]).className = "messageClientSelected"
             window.localStorage.setItem("targetClient", data[1])
@@ -51,3 +55,6 @@ function newDataHandler(data){
             console.log(data.toString())
     }
 }
+
+//todo: changing recipient doesnt clear messages
+//      changing recipient doesnt change previous button class
