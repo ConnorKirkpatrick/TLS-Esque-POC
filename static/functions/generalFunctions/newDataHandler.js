@@ -26,6 +26,23 @@ function newDataHandler(data){
             document.getElementById("cover-Text").innerText = "Received new chat request from "+data[1]
             document.getElementById("cancelNewClient").style.display = "none";
             document.getElementById("acceptDenySpan").style.display = "block";
+            break
+        case "requestAccept":
+            console.log("Chat request accepted by: "+data[1])
+            //hide the cover
+            document.getElementById("cover").style.display = "none";
+            //clear old messages
+            let messages = document.getElementById("messages")
+            while(messages.lastChild !== null){
+                messages.removeChild(messages.lastElementChild)
+            }
+            //mark the button as the current selected
+            document.getElementById(data[1]).className = "messageClientSelected"
+            window.localStorage.setItem("targetClient", data[1])
+            //enable the send button and text box
+            document.getElementById("input").disabled = false
+            document.getElementById("send").disabled = false
+            break
         default:
             console.log(data.toString())
     }

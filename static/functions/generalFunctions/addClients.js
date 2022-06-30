@@ -21,6 +21,12 @@ function addClients(clientList){
             newButton.innerText = username
             sidebar.appendChild(newButton)
             newButton.addEventListener("click", () =>{
+                //check that the target is different to the current one
+                let oldTarget = window.localStorage.getItem("targetClient")
+                if(oldTarget === newButton.id){
+                    console.log("SAME OLD")
+                    return
+                }
                 //indicate to server we intend to change client target
                 //do not change target until server acknowleges that the target has accepted
                 document.getElementById("cover").style.display = "block"; // do this to block actions taking place
@@ -29,25 +35,6 @@ function addClients(clientList){
                 document.getElementById("acceptDenySpan").style.display = "none";
 
                 socket.emit("clientMessage", (encrypt(buffer.Buffer.from(Uint8Array.from(JSON.parse(window.localStorage.getItem("key")))),"changeClient<SEPARATOR>"+newButton.id)))
-
-
-                console.log("Set client")
-                let oldTarget = window.localStorage.getItem("targetClient")
-                if(oldTarget === newButton.id){
-                    console.log("SAME OLD")
-                }
-                else if(document.getElementById(oldTarget) !== null){
-                    //different client to last, make sure old messages are deleted
-                    document.getElementById(oldTarget).className ="messageClient"
-                    let messages = document.getElementById("messages")
-                    while(messages.lastChild !== null){
-                        messages.removeChild(messages.lastElementChild)
-                    }
-                }
-                newButton.className = "messageClientSelected"
-                window.localStorage.setItem("targetClient", newButton.id)
-                document.getElementById("input").disabled = false
-                document.getElementById("send").disabled = false
             })
         }
     })
