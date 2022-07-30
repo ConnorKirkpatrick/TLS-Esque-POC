@@ -1,5 +1,14 @@
 const encrypt = require("../chacha/encrypt");
 
+/**
+ * Function used to ensure that new users select a username that is not a duplicate
+ * @param uName {String} Cookie of the requesting client
+ * @param username {String} Username requested by user
+ * @param userMap {Map} Map of all connected users information
+ * @param nameMap {Array} Array of all connected users usernames
+ * @param socket {Object} Socket.io object
+ * @returns {boolean} Is the requested username available or not
+ */
 function getUsername(uName,username, userMap, nameMap, socket){
     if(nameMap.includes(username)){
         //username is in use, fail
