@@ -4,7 +4,20 @@ const encrypt = require("../chacha/encrypt");
 const decrypt = require("../chacha/decrypt");
 const notifyNewUser = require("./notifyNewUsers");
 const messageHandler = require("../messageHandler");
-const handshakeTimer = require("../handshakeTimer")
+
+/**
+ * Handshake function used to establish a shared secret with a client <br>
+ * Use ECDH to establish a pre-master secret, use PMS to generate a master secret <br>
+ * Send confirmation message using master secret, confirm receipt of correct response encrypted with MS to authenticate
+ * connection
+ * @param socket {Object} Socket.io socket object for the current connection
+ * @param uName {String} Cookie of the client establishing connection
+ * @param userMap {Map} Map containing all user information
+ * @param flag {Boolean} Flag used to determine if we need to ask for a username or not
+ * @param io {Object} Socket.io object
+ * @param nameMap {Array} Array containing all usernames in active use
+ * @param handShake {Function} Handshake function for use in recursive case if connection fails
+ */
 
 function handshake(socket, uName, userMap, flag, io, nameMap, handShake) {
     console.log("Handshake start")
