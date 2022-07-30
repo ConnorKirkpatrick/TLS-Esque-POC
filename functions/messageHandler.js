@@ -5,6 +5,17 @@ const handshakeTimer = require("./handshakeTimer");
 const forwardMessage = require("./chatting/forwardMessage");
 const changeClient = require("./chatting/changeClient");
 
+/**
+ * The messageHandler manages all encrypted messages from the client including handshakes, messages, and message requests
+ * @param eData {Buffer} Encrypted data received from the client
+ * @param uName {String} Cookie of the connected client
+ * @param userMap {Map} Map containing all current client information
+ * @param nameMap {Array} Array containing all active usernames
+ * @param socket {Object} client socket object
+ * @param io {Object} Socket.io object
+ * @param handshake {Function} Handshake function
+ */
+
 function messageHandler(eData, uName, userMap, nameMap, socket, io, handshake){
     ///because we cannot use "socket.on" for encrypted messages without leaking data, we instead wrap the data inside of a "client message" to be unwrapped here
     /// the first argument is the opcode, the value that tells us what to do with the rest of the data
