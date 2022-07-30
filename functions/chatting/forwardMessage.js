@@ -4,7 +4,7 @@ const encrypt = require("../chacha/encrypt");
  * Server side function used to take message from a current client and send it to a targeted client <br>
  * Requires locating target symmetrical key, re-encrypting the message  with target keys and then sending the message
  * to the target
- * @param {string} target Targeted client
+ * @param {string} target Targeted client username
  * @param {string} msg The plaintext message to send to the target client
  * @param {Map} userMap The Map of all active client information
  * @param {Object} io Socket.io Object
