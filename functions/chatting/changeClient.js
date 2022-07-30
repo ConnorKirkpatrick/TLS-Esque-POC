@@ -2,11 +2,11 @@ const encrypt = require("../chacha/encrypt");
 
 /**
  * Function used manage requesting, accepting and denying message requests between users
- * @param uName The username of the client sending the message
- * @param userMap The usermap containing information on all clients
- * @param target The target user for the message request information
- * @param io Socket.io object
- * @param flag Flag identifying which kind of message the user wishes to send the target
+ * @param {String} uName The cookie of the client sending the message
+ * @param {Map} userMap The usermap containing information on all clients
+ * @param {String} target The target username for the message request information
+ * @param {Object} io Socket.io object
+ * @param {number} flag Flag identifying which kind of message the user wishes to send the target
  */
 
 function changeClient(uName, userMap, target, io, flag){
