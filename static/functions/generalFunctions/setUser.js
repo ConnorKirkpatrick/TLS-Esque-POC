@@ -1,3 +1,7 @@
+/**
+ * Client prompt using a prompt box to ask the user for a unique username
+ * @param {String} msg The message to display during the prompt
+ */
 function setUser(msg){
     window.localStorage.removeItem("targetClient")
     let username = prompt(msg)
