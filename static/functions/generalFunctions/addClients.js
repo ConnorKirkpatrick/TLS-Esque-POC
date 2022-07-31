@@ -1,3 +1,10 @@
+/**
+ * Function used to add other clients to our client. Other clients added as buttons on the left flank of the page,
+ * containing the name of the client. The client list will include our own username, so we check for that to ensure we
+ * do not see ourselves as another client we can message. As this message happens any time a new client is added, we
+ * maintain a record of our current messaging partner so that they appear as our messaging target
+ * @param {Array} clientList Array of all client usernames
+ */
 function addClients(clientList){
     let selfName = localStorage.getItem('UName')
     let sidebar = document.getElementById("participants")
@@ -24,7 +31,6 @@ function addClients(clientList){
                 //check that the target is different to the current one
                 let oldTarget = window.localStorage.getItem("targetClient")
                 if(oldTarget === newButton.id){
-                    console.log("SAME OLD")
                     return
                 }
                 //indicate to server we intend to change client target
@@ -33,7 +39,6 @@ function addClients(clientList){
                 document.getElementById("cover-Text").innerText = "Waiting for "+ newButton.id +" to accept message request"
                 document.getElementById("cancelNewClient").style.display = "block";
                 document.getElementById("acceptDenySpan").style.display = "none";
-
                 socket.emit("clientMessage", (encrypt(buffer.Buffer.from(Uint8Array.from(JSON.parse(window.localStorage.getItem("key")))),"changeClient<SEPARATOR>"+newButton.id)))
             })
         }
