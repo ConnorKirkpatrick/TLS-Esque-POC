@@ -1,3 +1,7 @@
+/**
+ * Small function used to reset user interface upon rejecting a message request. Hides the blocking cover and optional
+ * buttons along with sending notice to the server
+ */
 function cancelNewClient(){
     document.getElementById('cover').style.display = 'none'
     //send message to socket to terminate the new client request
