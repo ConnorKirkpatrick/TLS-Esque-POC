@@ -1,3 +1,19 @@
+/**
+ * Main function used to handle all incoming encrypted messages from the server. We view the opcode of the decrypted
+ * message data, position 0, and evaluate which option to pass the remainder of the message to.<br>
+ * conn-Test: initial handshake with the server. Data = setUsername flag<br>
+ * setUSer: Server requests for client to be prompted to set username<br>
+ * badUser: Provided username is invalid, server requests a new username. Data = old Username<br>
+ * goodUser: Provided username is valid, assign session variable for the username. Data = username<br>
+ * newUser: Notification of new users, refresh user list. Data = username list<br>
+ * newMessage: Receipt of message from chat partner. Data = message contents<br>
+ * messageRequest: Receipt of a message request from another client. Data = requesting client username<br>
+ * requestAccept: Notification that client has accepted our message request. Data = accepting clients' username<br>
+ * requestDeny: Notification that client has denied our message request. Data = denying clients' username<br>
+ * clientLeft: Notification from the server that the messaging client has gone offline. Data = clients' username<br>
+ * cancelRequest: Notification from the server that the request to chat has been cancelled.<br>
+ * @param {Array} data Decrypted server message data
+ */
 function newDataHandler(data){
     switch (data[0]){
         case "conn-Test":
@@ -14,21 +30,18 @@ function newDataHandler(data){
             document.title = data[1]+"'s chat room"
             break
         case "newUser":
-            console.log("New user: " + data[1])
             addClients(data[1].split(","))
             break;
         case "newMessage":
             receiveMessage(data[1],false)
             break;
         case "messageRequest":
-            console.log("New chat request")
             document.getElementById("cover").style.display = "block"; // do this to block actions taking place
             document.getElementById("cover-Text").innerText = "Received new chat request from "+data[1]
             document.getElementById("cancelNewClient").style.display = "none";
             document.getElementById("acceptDenySpan").style.display = "block";
             break
         case "requestAccept":
-            console.log("Chat request accepted by: "+data[1])
             //hide the cover
             document.getElementById("cover").style.display = "none";
             //clear old messages
@@ -76,6 +89,3 @@ function newDataHandler(data){
             console.log(data.toString())
     }
 }
-
-//todo: changing recipient doesnt clear messages
-//      changing recipient doesnt change previous button class
