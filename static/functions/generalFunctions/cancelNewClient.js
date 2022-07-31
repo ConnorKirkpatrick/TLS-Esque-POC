@@ -1,5 +1,5 @@
 /**
- * Small function used to reset user interface upon rejecting a message request. Hides the blocking cover and optional
+ * Small function used to reset user interface upon cancelling a message request. Hides the blocking cover and optional
  * buttons along with sending notice to the server
  */
 function cancelNewClient(){
