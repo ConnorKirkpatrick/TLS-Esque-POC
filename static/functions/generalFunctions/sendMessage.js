@@ -1,3 +1,6 @@
+/**
+ * Small function used to send our message to the server to be routed to our target client
+ */
 function sendMessage(){
     let message = document.getElementById("input").value
     let target = window.localStorage.getItem("targetClient")
